@@ -1,47 +1,15 @@
 var express = require('express');
-var fs = require('fs');
-var request = require('request');
-var cheerio = require('cheerio');
+var logger = require('morgan');
 
 var app = express();
+var port = process.env.PORT || 3000;
 
-app.get('/scrape', function(req, res){
-  url = 'https://www.imdb.com/showtimes/title/tt4154756';
+app.listen(port);
+app.use(logger('dev'));
 
-  request(url, function(error, response, html) {
-    if (!error) {
-      var $ = cheerio.load(html);
-
-      var title, release, rating;
-      var json = {
-        title: "",
-        release: "",
-        rating: ""
-      };
-
-      $('.header').filter(function() {
-        var data = $(this);
-        title = data.children().first().text();
-        release = data.children().last().children().text();
-        json.title = title;
-        json.release = release;
-      });
-
-      $('.star-box-giga-star').filter(function() {
-        var data = $(this);
-        rating = data.text();
-        json.rating = rating;
-      });
-
-      fs.writeFile('data/output.json', JSON.stringify(json, null, 4), function(err) {
-        console.log('File successfully written!');
-      });
-    }
-  });
-
-  res.send('Check console');
-});
-
-app.listen('8085');
+var index = require('./api/index');
+var exrx = require('./api/exrx');
+app.use('', index);
+app.use('/exrx', exrx);
 
 exports = module.exports = app;
