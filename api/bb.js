@@ -5,7 +5,7 @@ var express = require('express');
 var curl = require('curlrequest');
 var router = express.Router();
 
-const ROOT_URL = 'https://www.bodybuilding.com/exercises';
+const ROOT_URL = 'https://www.bodybuilding.com/';
 
 router.get('/scrape', function(req, res) {
 
@@ -18,23 +18,26 @@ function scrapeDirectoryPage(req, res) {
   var linkList = [];
 
   curl.request({
-    url: ROOT_URL
+    url: ROOT_URL + 'exercises'
   },
     (err, body) => {
       var $ = cheerio.load(body);
-
+      // Different syntax to show how you can do it differently
       $('.exercise-list-left').filter((i, el) => {
         $(el).find('a').each((i, el) => {
           console.log($(el).attr('href'));
           linkList.push($(el).attr('href'));
         });
       });
-
-      $('exercise-list-right').filter(function() {
+      // () => {} Can't be use here because $(this) needs a reference
+      $('.exercise-list-right').filter(function() {
         var root = $(this);
-        console.log(root);
+        root.find('a').each(function() {
+          linkList.push($(this).attr('href'));
+        });
       });
 
+      linkList.map((link) => console.log(ROOT_URL + link));
       return linkList;
     }
   );
