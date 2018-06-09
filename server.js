@@ -8,8 +8,8 @@ app.listen(port);
 app.use(logger('dev'));
 
 var index = require('./api/index');
-var exrx = require('./api/exrx');
+var bb = require('./api/bb');
 app.use('', index);
-app.use('/exrx', exrx);
+app.use('/bb', bb);
 
 exports = module.exports = app;
