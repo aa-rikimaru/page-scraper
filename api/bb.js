@@ -15,7 +15,7 @@ router.get('/scrape', function(req, res) {
 });
 
 //scrapeDatabase();
-scrapeExercisePage('https://www.bodybuilding.com/exercises/rocky-pull-upspulldowns');
+// scrapeExercisePage('https://www.bodybuilding.com/exercises/rocky-pull-upspulldowns');
 
 function scrapeDatabase() {
   curl.request({
