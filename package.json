@@ -13,8 +13,9 @@
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "cheerio": "^1.0.0-rc.2",
-    "curlrequest": "latest",
+    "curlrequest": "^1.0.1",
     "express": "^4.16.3",
+    "fs": "0.0.1-security",
     "morgan": "latest",
     "request": "^2.87.0"
   }

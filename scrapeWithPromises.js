@@ -1,14 +1,18 @@
 var axios = require('axios');
 var cheerio = require('cheerio');
+var fs = require('fs');
 
 const ROOT_URL = 'https://www.bodybuilding.com';
 
 let promise = axios.get(ROOT_URL + '/exercises');
 
-let links = promise.then((fromResolve) => {
+promise.then((fromResolve) => {
+  console.log('Reached 1');
   return scrapeDirectoryPageForLinks(fromResolve.data);
 })
 .then((links) => {
+  console.log('Reached 2');
+
   let exerciseTypePages = [];
   links.forEach((link) => {
     let result = axios.get(link);
@@ -17,14 +21,15 @@ let links = promise.then((fromResolve) => {
   return Promise.all(exerciseTypePages);
 })
 .then((results) => {
+  console.log('Reached 3');
   let exerciseLinks = [];
   results.forEach((res) => {
     exerciseLinks = exerciseLinks.concat(scrapeExerciseListPages(res.data));
   });
   return exerciseLinks;
-});
-
-links.then((results) => {
+})
+.then((results) => {
+  console.log('Reached 4');
   let filteredResults = results.filter((url) => {
     let temp = url.substring(url.search("exercises/") + 10);
     return !(temp.search("/") >= 0 || temp.search("finder") >= 0);
@@ -33,6 +38,7 @@ links.then((results) => {
   return filteredResults;
 })
 .then((links) => {
+  console.log('Reached 5');
   let exercisePages = [];
   links.forEach((link) => {
     let result = axios.get(link);
@@ -42,11 +48,33 @@ links.then((results) => {
   return Promise.all(exercisePages);
 })
 .then((pages) => {
+  console.log('Reached 6');
   pages.forEach((page) => {
     let exercise = scrapePage(page.data);
-    console.log(exercise.name);
+    saveExerciseAsJSFile(exercise);
   })
-})
+});
+
+function saveExerciseAsJSFile(exercise) {
+  console.log('Writing', exercise.name);
+
+  try {
+    fs.writeFileSync('./data/' + exercise.name + '.json', JSON.stringify(exercise, null, 4));
+  } catch (err) {
+
+  }
+
+  // try {
+  //   console.log('Writing', exercise.name);
+  //   fs.writeFileSync('./data/' + exercise.name + '.json', 'HELLO', (err) => {
+  //     if (!err) {
+  //       console.log(exercise.name, 'added to list!');
+  //     }
+  //   });
+  // } catch (err) {
+  //   console.log(err, exercise.name);
+  // }
+}
 
 function scrapePage(html) {
   var $ = cheerio.load(html);

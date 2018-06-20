@@ -14,7 +14,7 @@ router.get('/scrape', function(req, res) {
 
 });
 
-//scrapeDatabase();
+scrapeDatabase();
 // scrapeExercisePage('https://www.bodybuilding.com/exercises/rocky-pull-upspulldowns');
 
 function scrapeDatabase() {
@@ -124,15 +124,8 @@ function scrapeExercisePage(url) {
 
 function saveExerciseAsJSFile(exercise) {
   exercise.name = exercise.name.replace("/", '-');
-  try {
-    fs.writeFileSync('../data/' + exercise.name + '.json', JSON.stringify(exercise, null, 4), (err) => {
-      if (!err) {
-        console.log(exercise.name, 'added to list!');
-      }
-    });
-  } catch (err) {
-    console.log(err, exercise.name);
-  }
+  fs.writeFileSync('../data/' + exercise.name + '.json', JSON.stringify(exercise, null, 4));
+
 }
 
 module.exports = router;
